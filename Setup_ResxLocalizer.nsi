@@ -10,8 +10,8 @@
 !define APP "ResxLocalizer"
 !define COM "HIRAOKA HYPERS TOOLS, Inc."
 
-!define VER "0.1"
-!define APV "0_1"
+!define VER "0.2"
+!define APV "0_2"
 
 ; The name of the installer
 Name "${APP} ${VER}"
@@ -112,8 +112,8 @@ Section "Start Menu Shortcuts"
   
 SectionEnd
 
-Section /o "Open: Microsoft .NET Framework 4.5"
-  Exec "http://www.microsoft.com/ja-jp/download/details.aspx?id=30653"
+Section /o "Install Microsoft .NET Framework 4.5"
+  ExecShell open "http://www.microsoft.com/ja-jp/download/details.aspx?id=30653"
 SectionEnd
 
 ;--------------------------------

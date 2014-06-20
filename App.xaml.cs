@@ -16,6 +16,9 @@ namespace ResxLocalizer {
         protected override void OnStartup(StartupEventArgs e) {
             base.OnStartup(e);
 
+            var mform = new MainWindow();
+            MainWindow = mform;
+
             Sel Seled = null;
             foreach (String fp in e.Args) {
                 if (File.Exists(fp)) {
@@ -23,7 +26,7 @@ namespace ResxLocalizer {
                     foreach (String row in File.ReadAllLines(fp, Encoding.UTF8)) {
                         String[] cols = row.Split('\t');
                         if (cols.Length <= 1) continue;
-                        sels.Add(new Sel { Disp = cols[0], Files = cols.Skip(1).ToArray() });
+                        sels.Add(new Sel { Disp = cols[0], Files = cols.Skip(1).Select(p => Path.Combine(Path.GetDirectoryName(fp), p)).ToArray() });
                     }
                     if (sels.Count != 0) {
                         var form = new SelWin();
@@ -36,10 +39,8 @@ namespace ResxLocalizer {
             }
 
             {
-                var form = new MainWindow();
-                MainWindow = form;
-                if (Seled != null) form.OpenResx(Seled.Files);
-                form.Show();
+                if (Seled != null) mform.OpenResx(Seled.Files);
+                mform.Show();
             }
         }
     }

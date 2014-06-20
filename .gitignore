@@ -173,4 +173,4 @@ UpgradeLog*.htm
 # Microsoft Fakes
 FakesAssemblies/
 /Setup_ResxLocalizer.exe
-/Setup_ResxLocalizer_0_1.exe
+/Setup_ResxLocalizer_*_*.exe
