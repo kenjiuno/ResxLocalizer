@@ -115,6 +115,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\bulleted_list_options.png" />
     <Resource Include="Resources\Strings_7959_32x.png" />
     <Resource Include="1.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

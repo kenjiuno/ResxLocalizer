@@ -95,9 +95,11 @@ namespace ResxLocalizer {
         public class Caset {
             XDocument x;
             String fp;
+            public bool IsMod = false;
 
             public void Load(String fp) {
                 x = XDocument.Load(this.fp = fp);
+                IsMod = false;
             }
 
             public IEnumerable<String> Names {
@@ -145,11 +147,13 @@ namespace ResxLocalizer {
                 }
                 elv.RemoveAll();
                 elv.Add(new XText(value));
+                IsMod = true;
             }
 
             public void Save() {
                 if (x == null) return;
                 x.Save(fp);
+                IsMod = false;
             }
         }
 
@@ -183,6 +187,56 @@ namespace ResxLocalizer {
             foreach (String k in c1.Names.Concat(c2.Names).Distinct()) {
                 oc.Add(new Item { c1 = c1, c2 = c2, Name = k });
             }
+        }
+
+        List<Sel> alSels = new List<Sel>();
+
+        public void AddSel(Sel sel) {
+            alSels.Add(sel);
+        }
+
+        private void RibbonWindow_Loaded(object sender, RoutedEventArgs e) {
+            SelNow();
+        }
+
+        private void SelNow() {
+            mSel.Visibility = (alSels.Count != 0) ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+            if (alSels.Count == 0) return;
+            if (!Saved()) return;
+            SelWin form = new SelWin();
+            form.DataContext = alSels;
+
+            if (form.ShowDialog() ?? false) {
+                var seled = form.Seled;
+                OpenResx(seled.Files);
+            }
+        }
+
+        bool Saved() {
+            if (!IsMod) return true;
+            switch (MessageBox.Show("保存?", Title, MessageBoxButton.YesNoCancel, MessageBoxImage.Exclamation)) {
+                case MessageBoxResult.Yes:
+                    mSaveResx_Click(this, new RoutedEventArgs());
+                    return true;
+                case MessageBoxResult.No:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        bool IsMod {
+            get {
+                return c1.IsMod || c2.IsMod;
+            }
+        }
+
+        private void mSel_Click(object sender, RoutedEventArgs e) {
+            SelNow();
+        }
+
+        private void RibbonWindow_Closing(object sender, CancelEventArgs e) {
+            e.Cancel = !Saved();
         }
     }
 }

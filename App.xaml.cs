@@ -19,29 +19,17 @@ namespace ResxLocalizer {
             var mform = new MainWindow();
             MainWindow = mform;
 
-            Sel Seled = null;
             foreach (String fp in e.Args) {
                 if (File.Exists(fp)) {
                     List<Sel> sels = new List<Sel>();
                     foreach (String row in File.ReadAllLines(fp, Encoding.UTF8)) {
                         String[] cols = row.Split('\t');
                         if (cols.Length <= 1) continue;
-                        sels.Add(new Sel { Disp = cols[0], Files = cols.Skip(1).Select(p => Path.Combine(Path.GetDirectoryName(fp), p)).ToArray() });
-                    }
-                    if (sels.Count != 0) {
-                        var form = new SelWin();
-                        form.DataContext = sels;
-                        if (form.ShowDialog() ?? false) {
-                            Seled = form.Seled;
-                        }
+                        mform.AddSel(new Sel { Disp = cols[0], Files = cols.Skip(1).Select(p => Path.Combine(Path.GetDirectoryName(fp), p)).ToArray() });
                     }
                 }
             }
-
-            {
-                if (Seled != null) mform.OpenResx(Seled.Files);
-                mform.Show();
-            }
+            mform.Show();
         }
     }
 }

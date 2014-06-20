@@ -14,9 +14,9 @@
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
         <Label Name="l1" Grid.Row="0" Grid.Column="0">言語1</Label>
-        <TextBox Name="tb1" Grid.Row="0" Grid.Column="1" Text="{Binding Disp1,UpdateSourceTrigger=PropertyChanged}" />
+        <TextBox Name="tb1" Grid.Row="0" Grid.Column="1" Text="{Binding Disp1,UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" />
         <Label Name="l2" Grid.Row="1" Grid.Column="0">言語2</Label>
-        <TextBox Name="tb2" Grid.Row="1" Grid.Column="1" Text="{Binding Disp2,UpdateSourceTrigger=PropertyChanged}" />
+        <TextBox Name="tb2" Grid.Row="1" Grid.Column="1" Text="{Binding Disp2,UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" />
         <Label Grid.Row="2" Grid.ColumnSpan="2">※ 字句を変更すると、即時反映されます。</Label>
     </Grid>
 </Window>
