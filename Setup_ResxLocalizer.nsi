@@ -10,11 +10,14 @@
 !define APP "ResxLocalizer"
 !define COM "HIRAOKA HYPERS TOOLS, Inc."
 
+!define VER "0.1"
+!define APV "0_1"
+
 ; The name of the installer
-Name "${APP}"
+Name "${APP} ${VER}"
 
 ; The file to write
-OutFile "Setup_${APP}.exe"
+OutFile "Setup_${APP}_${APV}.exe"
 
 ; The default installation directory
 InstallDir "$PROGRAMFILES\${APP}"
