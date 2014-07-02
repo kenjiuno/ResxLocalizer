@@ -4,8 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,7 +17,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Xml.Linq;
 
 namespace ResxLocalizer {
@@ -90,71 +91,6 @@ namespace ResxLocalizer {
             c1.Save();
             c2.Save();
             MessageBox.Show("保存しました。", this.Title, MessageBoxButton.OK, MessageBoxImage.Information);
-        }
-
-        public class Caset {
-            XDocument x;
-            String fp;
-            public bool IsMod = false;
-
-            public void Load(String fp) {
-                x = XDocument.Load(this.fp = fp);
-                IsMod = false;
-            }
-
-            public IEnumerable<String> Names {
-                get {
-                    if (x != null) {
-                        foreach (var s in x
-                            .Elements("root")
-                            .Elements("data")
-                            .Where(eld => eld.Attribute("type") == null || eld.Attribute("type").Value == "System.String")
-                            .Where(eld => eld.Attribute("mimetype") == null)
-                            .Attributes("name")
-                            .Select(p => p.Value)
-                            .Where(p => !p.StartsWith(">>"))
-                            .OrderBy(p => p)
-                        ) {
-                            yield return s;
-                        }
-                    }
-                }
-            }
-
-            public string Gets(string Name) {
-                if (x != null) {
-                    foreach (var elv in x.Elements("root").Elements("data").Where(eld => eld.Attribute("name") != null && eld.Attribute("name").Value == Name).Elements("value")) {
-                        return elv.Value;
-                    }
-                }
-                return String.Empty;
-            }
-
-            public void Sets(string Name, string value) {
-                if (x == null) return;
-                XElement eld = null;
-                var elr = x.Elements("root").First();
-                eld = elr.Elements("data").Where(el => el.Attribute("name") != null && el.Attribute("name").Value == Name).FirstOrDefault();
-                if (eld == null) {
-                    elr.Add(eld = new XElement("data"
-                        , new XAttribute(XNamespace.Xml + "space", "preserve")
-                        , new XAttribute("name", Name)
-                        ));
-                }
-                var elv = eld.Element("value");
-                if (elv == null) {
-                    eld.Add(elv = new XElement("value"));
-                }
-                elv.RemoveAll();
-                elv.Add(new XText(value));
-                IsMod = true;
-            }
-
-            public void Save() {
-                if (x == null) return;
-                x.Save(fp);
-                IsMod = false;
-            }
         }
 
         private void mSwap_Click(object sender, RoutedEventArgs e) {
@@ -237,6 +173,110 @@ namespace ResxLocalizer {
 
         private void RibbonWindow_Closing(object sender, CancelEventArgs e) {
             e.Cancel = !Saved();
+        }
+    }
+
+    public class Caset {
+        XDocument x;
+        String fp;
+        public bool IsMod = false;
+
+        public void Load(String fp) {
+            x = XDocument.Load(this.fp = fp);
+            IsMod = false;
+        }
+
+        public IEnumerable<String> Names {
+            get {
+                if (x != null) {
+                    foreach (var s in x
+                        .Elements("root")
+                        .Elements("data")
+                        .Where(eld => eld.Attribute("type") == null || eld.Attribute("type").Value == "System.String")
+                        .Where(eld => eld.Attribute("mimetype") == null)
+                        .Attributes("name")
+                        .Select(p => p.Value)
+                        .Where(p => !p.StartsWith(">>"))
+                        .OrderBy(p => p)
+                    ) {
+                        yield return s;
+                    }
+                }
+            }
+        }
+
+        public ResName ResName {
+            get {
+                return new ResName(fp);
+            }
+        }
+
+        public string Gets(string Name) {
+            if (x != null) {
+                foreach (var elv in x.Elements("root").Elements("data").Where(eld => eld.Attribute("name") != null && eld.Attribute("name").Value == Name).Elements("value")) {
+                    return elv.Value;
+                }
+            }
+            return String.Empty;
+        }
+
+        public void Sets(string Name, string value) {
+            if (x == null) return;
+            XElement eld = null;
+            var elr = x.Elements("root").First();
+            eld = elr.Elements("data").Where(el => el.Attribute("name") != null && el.Attribute("name").Value == Name).FirstOrDefault();
+            if (eld == null) {
+                elr.Add(eld = new XElement("data"
+                    , new XAttribute(XNamespace.Xml + "space", "preserve")
+                    , new XAttribute("name", Name)
+                    ));
+            }
+            var elv = eld.Element("value");
+            if (elv == null) {
+                eld.Add(elv = new XElement("value"));
+            }
+            elv.RemoveAll();
+            elv.Add(new XText(value));
+            IsMod = true;
+        }
+
+        public void Save() {
+            if (x == null) return;
+            x.Save(fp);
+            IsMod = false;
+        }
+    }
+
+    public class ResName {
+        public ResName(String fp) {
+            Avail = false;
+            Dir = String.Empty;
+            BaseName = String.Empty;
+            Language = String.Empty;
+
+            if (fp != null) {
+                Dir = Path.GetDirectoryName(fp);
+                String fn = Path.GetFileName(fp);
+                Match M;
+                if ((M = Regex.Match(fn, "^(?<b>.+?)\\.(?<a>[a-z]+\\-[a-z]+)\\.resx", RegexOptions.IgnoreCase)).Success) {
+                    BaseName = M.Groups["b"].Value.ToLowerInvariant();
+                    Language = M.Groups["a"].Value;
+                    Avail = true;
+                }
+                else if ((M = Regex.Match(fn, "^(?<b>.+?)\\.resx", RegexOptions.IgnoreCase)).Success) {
+                    BaseName = M.Groups["b"].Value.ToLowerInvariant();
+                    Avail = true;
+                }
+            }
+        }
+
+        public bool Avail { get; set; }
+        public String Dir { get; set; }
+        public String BaseName { get; set; }
+        public String Language { get; set; }
+
+        public override string ToString() {
+            return BaseName + "." + Language;
         }
     }
 }

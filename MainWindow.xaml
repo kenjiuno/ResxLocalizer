@@ -16,11 +16,13 @@
                 <R:RibbonGroup Header="ファイル">
                     <R:RibbonButton Label="Resxを開く" IsEnabled="True" LargeImageSource="Resources/folder_Open_32xLG.png" x:Name="mOpenResx" Click="mOpenResx_Click" />
                     <R:RibbonButton Label="変更を保存する" IsEnabled="True" LargeImageSource="Resources/setup-v_32x.png" x:Name="mSaveResx" Click="mSaveResx_Click" />
-                    <R:RibbonButton Label="他を編集" IsEnabled="True" LargeImageSource="Resources/bulleted_list_options.png" x:Name="mSel" Click="mSel_Click" />
+                    <R:RibbonButton Label="他を編集する" IsEnabled="True" LargeImageSource="Resources/bulleted_list_options.png" x:Name="mSel" Click="mSel_Click" />
                 </R:RibbonGroup>
-                <R:RibbonGroup Header="作業没頭">
-                    <R:RibbonButton Label="内容編集" IsEnabled="True" LargeImageSource="Resources/126_Edit_32x32_72.png" x:Name="mEdit" Click="mEdit_Click" />
-                    <R:RibbonButton Label="内容入れ替え" IsEnabled="True" LargeImageSource="Resources/ComponentDiagramFile_componentdiagram_13449_32x.png" x:Name="mSwap" Click="mSwap_Click" />
+                <R:RibbonGroup Header="個別編集">
+                    <R:RibbonButton Label="編集する" IsEnabled="True" LargeImageSource="Resources/126_Edit_32x32_72.png" x:Name="mEdit" Click="mEdit_Click" />
+                </R:RibbonGroup>
+                <R:RibbonGroup Header="選択編集">
+                    <R:RibbonButton Label="言語1⇔言語2" IsEnabled="True" LargeImageSource="Resources/ComponentDiagramFile_componentdiagram_13449_32x.png" x:Name="mSwap" Click="mSwap_Click" />
                 </R:RibbonGroup>
             </R:RibbonTab>
         </R:Ribbon>
