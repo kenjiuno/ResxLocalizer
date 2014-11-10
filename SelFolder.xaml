@@ -1,0 +1,30 @@
+﻿<Window x:Class="ResxLocalizer.SelFolder"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="フォルダと言語を選択" Height="294" Width="349">
+    <DockPanel>
+        <DockPanel LastChildFill="True" DockPanel.Dock="Top">
+            <Label Content="構成：" MinWidth="100" HorizontalContentAlignment="Right" />
+            <Button Name="bSaveConf" Content="保存" DockPanel.Dock="Right" Click="bSaveConf_Click" />
+            <Button Name="bDelConf" Content="消す" DockPanel.Dock="Right" Click="bDelConf_Click" />
+            <Button Name="bReadConf" Content="読み込み" DockPanel.Dock="Right" Click="bReadConf_Click" />
+            <ComboBox Name="cbConf" IsEditable="True" ItemsSource="{Binding}" />
+        </DockPanel>
+        <DockPanel LastChildFill="True" DockPanel.Dock="Top">
+            <Label Content="フォルダ：" MinWidth="100" HorizontalContentAlignment="Right" />
+            <Button Name="bRefDir" DockPanel.Dock="Right" Click="bRefDir_Click">参照</Button>
+            <TextBox Name="tbDir" HorizontalAlignment="Stretch" LostFocus="tbDir_LostFocus" />
+        </DockPanel>
+        <DockPanel>
+            <Label Content="言語：" DockPanel.Dock="Top" />
+            <Button Content="開く" DockPanel.Dock="Right" VerticalAlignment="Top" HorizontalAlignment="Left" Width="75" Height="36" Name="bOk" Click="bOk_Click"/>
+            <ListBox Name="lbLang" ItemsSource="{Binding}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <CheckBox IsChecked="{Binding IsSelected}" Content="{Binding Disp}" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </DockPanel>
+    </DockPanel>
+</Window>

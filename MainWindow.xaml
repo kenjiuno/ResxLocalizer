@@ -24,10 +24,13 @@
                 <R:RibbonGroup Header="選択編集">
                     <R:RibbonButton Label="言語1⇔言語2" IsEnabled="True" LargeImageSource="Resources/ComponentDiagramFile_componentdiagram_13449_32x.png" x:Name="mSwap" Click="mSwap_Click" />
                 </R:RibbonGroup>
+                <R:RibbonGroup Header="新機軸">
+                    <R:RibbonButton Label="フォルダごと、がっつり編集" IsEnabled="True" LargeImageSource="Resources/folder_Closed_32xLG.png" x:Name="mMany" Click="mMany_Click" />
+                </R:RibbonGroup>
             </R:RibbonTab>
         </R:Ribbon>
         <Grid Grid.Row="1">
-            <ListView HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding}" Name="lvItems" IsSynchronizedWithCurrentItem="True">
+            <ListView HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ItemsSource="{Binding}" Name="lvItems" IsSynchronizedWithCurrentItem="True" GridViewColumnHeader.Click="results_Click">
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
                         <EventSetter Event="MouseDoubleClick" Handler="lvItems_ItemActivation"/>
@@ -35,7 +38,7 @@
                 </ListView.ItemContainerStyle>
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Header="リソース名" Width="200" DisplayMemberBinding="{Binding Name}" />
+                        <GridViewColumn Header="リソース名" Width="200" DisplayMemberBinding="{Binding Name}" x:Name="hr" />
                         <GridViewColumn Header="言語1" Width="200" DisplayMemberBinding="{Binding Disp1}" x:Name="h1" />
                         <GridViewColumn Header="言語2" Width="200" DisplayMemberBinding="{Binding Disp2}" x:Name="h2" />
                     </GridView>
