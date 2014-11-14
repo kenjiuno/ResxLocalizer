@@ -26,6 +26,7 @@
                 </R:RibbonGroup>
                 <R:RibbonGroup Header="入出力">
                     <R:RibbonButton Label="CSV出力" IsEnabled="True" LargeImageSource="Resources/Textfile_818_32x.png" x:Name="mExp" Click="mExp_Click" />
+                    <R:RibbonButton Label="CSV入力" IsEnabled="True" LargeImageSource="Resources/Textfile_818_32x.png" x:Name="mImp" Click="mImp_Click" />
                 </R:RibbonGroup>
             </R:RibbonTab>
         </R:Ribbon>

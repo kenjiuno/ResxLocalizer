@@ -246,6 +246,26 @@ namespace ResxLocalizer {
                 }
             }
         }
+
+        private void mImp_Click(object sender, RoutedEventArgs e) {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Filter = "*.csv SJIS|*.csv|*.csv UTF-8|*.csv";
+            if (ofd.ShowDialog() ?? false) {
+                Csvr r = new Csvr();
+                r.ReadStr(File.ReadAllText(ofd.FileName, (ofd.FilterIndex == 2) ? Encoding.UTF8 : Encoding.GetEncoding(932)), ',', '"');
+                var rows = r.alrow;
+                for (int y = 1; y < rows.Count; y++) {
+                    var cols = rows[y];
+                    if (cols.Length == 3) {
+                        var item = oc.FirstOrDefault(p => p.Name.Equals(cols[0]));
+                        if (item != null) {
+                            if (!item.Disp1.Equals(cols[1])) item.Disp1 = cols[1];
+                            if (!item.Disp2.Equals(cols[2])) item.Disp2 = cols[2];
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public class MCaset : CasetBase {
