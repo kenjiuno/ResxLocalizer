@@ -62,19 +62,12 @@
     </ApplicationDefinition>
     <Compile Include="Csvr.cs" />
     <Compile Include="Csvw.cs" />
-    <Compile Include="SearchWin.xaml.cs">
-      <DependentUpon>SearchWin.xaml</DependentUpon>
-    </Compile>
     <Compile Include="SelFolder.xaml.cs">
       <DependentUpon>SelFolder.xaml</DependentUpon>
     </Compile>
     <Compile Include="SelWin.xaml.cs">
       <DependentUpon>SelWin.xaml</DependentUpon>
     </Compile>
-    <Page Include="EdWin.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -83,17 +76,10 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="EdWin.xaml.cs">
-      <DependentUpon>EdWin.xaml</DependentUpon>
-    </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="SearchWin.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="SelFolder.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -132,7 +118,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Zoom_32x32.png" />
+    <Resource Include="Resources\Textfile_818_32x.png" />
     <Resource Include="Resources\folder_Closed_32xLG.png" />
     <Resource Include="Resources\bulleted_list_options.png" />
     <Resource Include="Resources\Strings_7959_32x.png" />
@@ -143,7 +129,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Resource Include="Resources\ComponentDiagramFile_componentdiagram_13449_32x.png" />
-    <Resource Include="Resources\126_Edit_32x32_72.png" />
     <Resource Include="Resources\setup-v_32x.png" />
     <Resource Include="Resources\folder_Open_32xLG.png" />
   </ItemGroup>

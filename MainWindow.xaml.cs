@@ -18,6 +18,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Xml.Linq;
+using Viewer;
 
 namespace ResxLocalizer {
     /// <summary>
@@ -29,6 +30,8 @@ namespace ResxLocalizer {
 
             cvs.Source = oc;
             lvItems.DataContext = cvs;
+            tbDisp1.DataContext = cvs;
+            tbDisp2.DataContext = cvs;
         }
 
         CollectionViewSource cvs = new CollectionViewSource();
@@ -58,19 +61,7 @@ namespace ResxLocalizer {
         }
 
         private void lvItems_ItemActivation(object sender, MouseButtonEventArgs e) {
-            EditIt();
-        }
 
-        private void EditIt() {
-            Item it = lvItems.SelectedItem as Item;
-            if (it == null) return;
-
-            EdWin form = new EdWin();
-            form.l1.Content = "" + ((GridViewColumn)FindName("h1")).Header;
-            form.l2.Content = "" + ((GridViewColumn)FindName("h2")).Header;
-            form.DataContext = it;
-
-            form.ShowDialog();
         }
 
         CasetBase c1 = new Caset(), c2 = new Caset();
@@ -103,10 +94,6 @@ namespace ResxLocalizer {
                 it.Disp1 = v1;
                 it.Disp2 = v2;
             }
-        }
-
-        private void mEdit_Click(object sender, RoutedEventArgs e) {
-            EditIt();
         }
 
         public void CloseMe() {
@@ -217,41 +204,44 @@ namespace ResxLocalizer {
             }
         }
 
-        SearchWin forms = null;
+        private void bSearchNext_Click(object sender, RoutedEventArgs e) {
+            bool ifNext = object.ReferenceEquals(bSearchNext, sender);
 
-        private void mSearch_Click(object sender, RoutedEventArgs e) {
-            if (forms != null) {
-                forms.Close();
-                forms = null;
+            int x = oc.IndexOf(cvs.View.CurrentItem as Item);
+            int n = oc.Count;
+            var kws = tbKws.Text;
+            for (int i = 0; i < n; i++) {
+                var it = oc[(x + (ifNext ? +i + 1 : -i - 1) + n + n) % n];
+
+                String src = it.Disp1 + " " + it.Disp2;
+                bool all = true;
+                foreach (String kw in Regex.Replace(kws, "\\s+", " ").Trim().Split(' ')) {
+                    all &= src.IndexOf(kw, StringComparison.CurrentCultureIgnoreCase) >= 0;
+                }
+                if (all) {
+                    cvs.View.MoveCurrentTo(it);
+                    lvItems.ScrollIntoView(it);
+                    break;
+                }
             }
-
-            forms = new SearchWin();
-            forms.Left = Left + 20;
-            forms.Top = Top + 20;
-            forms.St = new Finder() { cvs = cvs, lvItems = lvItems };
-            forms.Show();
         }
 
-        class Finder : ISearchText {
-            public CollectionViewSource cvs;
-            public ListView lvItems;
+        private void mExp_Click(object sender, RoutedEventArgs e) {
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.Filter = "*.csv SJIS|*.csv|*.csv UTF-8|*.csv";
+            if (sfd.ShowDialog() ?? false) {
+                using (StreamWriter wr = new StreamWriter(sfd.FileName, false, (sfd.FilterIndex == 2) ? Encoding.UTF8 : Encoding.GetEncoding(932))) {
+                    Csvw w = new Csvw(wr, ',', '"');
+                    w.Write("リソース名");
+                    w.Write("言語1");
+                    w.Write("言語2");
+                    w.NextRow();
 
-            public void SearchText(String kws) {
-                var al = ((System.Collections.IEnumerable)cvs.View).Cast<Item>().ToArray();
-                int x = Array.IndexOf(al, cvs.View.CurrentItem);
-                int n = al.Length;
-                for (int i = 0; i < n; i++) {
-                    var it = al[(x + i + 1 + n) % n];
-
-                    String src = it.Disp1 + " " + it.Disp2;
-                    bool all = true;
-                    foreach (String kw in Regex.Replace(kws, "\\s+", " ").Trim().Split(' ')) {
-                        all &= src.IndexOf(kw, StringComparison.CurrentCultureIgnoreCase) >= 0;
-                    }
-                    if (all) {
-                        cvs.View.MoveCurrentTo(it);
-                        lvItems.ScrollIntoView(it);
-                        break;
+                    foreach (Item item in oc) {
+                        w.Write(item.Name);
+                        w.Write(item.Disp1);
+                        w.Write(item.Disp2);
+                        w.NextRow();
                     }
                 }
             }
