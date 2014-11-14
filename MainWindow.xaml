@@ -36,11 +36,30 @@
                     <EventSetter Event="MouseDoubleClick" Handler="lvItems_ItemActivation"/>
                 </Style>
             </ListView.ItemContainerStyle>
+            <ListView.Resources>
+                <local:変更Converter x:Key="変更Converter" />
+            </ListView.Resources>
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="リソース名" Width="200" DisplayMemberBinding="{Binding Name}" x:Name="hr" />
-                    <GridViewColumn Header="言語1" Width="200" DisplayMemberBinding="{Binding Disp1}" x:Name="h1" />
-                    <GridViewColumn Header="言語2" Width="200" DisplayMemberBinding="{Binding Disp2}" x:Name="h2" />
+                    <GridViewColumn Header="言語1" Width="200" x:Name="h1">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border BorderThickness="3,0,0,0" BorderBrush="{Binding IsMod1,Converter={StaticResource 変更Converter}}">
+                                    <TextBlock Text="{Binding Disp1,Mode=OneWay}" Margin="3,0,0,0" />
+                                </Border>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="言語2" Width="200" x:Name="h2">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border BorderThickness="3,0,0,0" BorderBrush="{Binding IsMod2,Converter={StaticResource 変更Converter}}">
+                                    <TextBlock Text="{Binding Disp2,Mode=OneWay}" Margin="3,0,0,0" />
+                                </Border>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
                 </GridView>
             </ListView.View>
         </ListView>
