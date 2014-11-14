@@ -1,0 +1,13 @@
+﻿<Window x:Class="ResxLocalizer.SearchWin"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="検索" Height="129" Width="460">
+    <DockPanel FocusManager.FocusedElement="{Binding ElementName=tb}">
+        <Label DockPanel.Dock="Top">文字列：</Label>
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom">
+            <Button Width="75" Name="bSearch" IsDefault="True" Click="bSearch_Click">次を検索</Button>
+            <Button Width="75" Name="bClose" IsCancel="True">閉じる</Button>
+        </StackPanel>
+        <TextBox Name="tb" />
+    </DockPanel>
+</Window>

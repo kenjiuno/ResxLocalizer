@@ -216,6 +216,46 @@ namespace ResxLocalizer {
                 cvs.SortDescriptions.Add(new SortDescription("Disp2", ListSortDirection.Ascending));
             }
         }
+
+        SearchWin forms = null;
+
+        private void mSearch_Click(object sender, RoutedEventArgs e) {
+            if (forms != null) {
+                forms.Close();
+                forms = null;
+            }
+
+            forms = new SearchWin();
+            forms.Left = Left + 20;
+            forms.Top = Top + 20;
+            forms.St = new Finder() { cvs = cvs, lvItems = lvItems };
+            forms.Show();
+        }
+
+        class Finder : ISearchText {
+            public CollectionViewSource cvs;
+            public ListView lvItems;
+
+            public void SearchText(String kws) {
+                var al = ((System.Collections.IEnumerable)cvs.View).Cast<Item>().ToArray();
+                int x = Array.IndexOf(al, cvs.View.CurrentItem);
+                int n = al.Length;
+                for (int i = 0; i < n; i++) {
+                    var it = al[(x + i + 1 + n) % n];
+
+                    String src = it.Disp1 + " " + it.Disp2;
+                    bool all = true;
+                    foreach (String kw in Regex.Replace(kws, "\\s+", " ").Trim().Split(' ')) {
+                        all &= src.IndexOf(kw, StringComparison.CurrentCultureIgnoreCase) >= 0;
+                    }
+                    if (all) {
+                        cvs.View.MoveCurrentTo(it);
+                        lvItems.ScrollIntoView(it);
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     public class MCaset : CasetBase {

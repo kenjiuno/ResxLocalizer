@@ -18,6 +18,9 @@
                     <R:RibbonButton Label="変更を保存する" IsEnabled="True" LargeImageSource="Resources/setup-v_32x.png" x:Name="mSaveResx" Click="mSaveResx_Click" />
                     <R:RibbonButton Label="他を編集する" IsEnabled="True" LargeImageSource="Resources/bulleted_list_options.png" x:Name="mSel" Click="mSel_Click" />
                 </R:RibbonGroup>
+                <R:RibbonGroup Header="検索">
+                    <R:RibbonButton Label="検索する" IsEnabled="True" LargeImageSource="Resources/Zoom_32x32.png" x:Name="mSearch" Click="mSearch_Click" />
+                </R:RibbonGroup>
                 <R:RibbonGroup Header="個別編集">
                     <R:RibbonButton Label="編集する" IsEnabled="True" LargeImageSource="Resources/126_Edit_32x32_72.png" x:Name="mEdit" Click="mEdit_Click" />
                 </R:RibbonGroup>
