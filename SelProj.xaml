@@ -1,0 +1,29 @@
+﻿<Window x:Class="ResxLocalizer.SelProj"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="プロジェクトを選択" Height="282" Width="544">
+    <Grid FocusManager.FocusedElement="{Binding ElementName=tbProj}" Margin="3">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Label Content="プロジェクト：" Grid.Row="0" HorizontalAlignment="Right" />
+        <ListBox Name="lbProj" ItemsSource="{Binding}" Grid.Row="0" Grid.Column="1" DataContext="{x:Null}" SelectionChanged="lbProj_SelectionChanged" Margin="3">
+        </ListBox>
+
+        <Label Content="ファイル名：" Grid.Row="1" HorizontalAlignment="Right" />
+        <TextBox Grid.Row="1" Grid.Column="1" Name="tbProj" Margin="3" Text="{Binding ProjName}" />
+
+        <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1" Margin="0,10,0,0" Height="35">
+            <Button Content="_Load Project" Margin="0,0,10,0" Name="bLoad" Click="bLoad_Click" />
+            <Button Content="_Save Project" Margin="0,0,10,0" Name="bSave" Click="bSave_Click" />
+            <Button Content="_Delete Project" Margin="0,0,10,0" Name="bDelete" Click="bDelete_Click" />
+        </StackPanel>
+    </Grid>
+</Window>

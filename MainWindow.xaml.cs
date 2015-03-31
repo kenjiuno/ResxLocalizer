@@ -218,21 +218,24 @@ namespace ResxLocalizer {
             e.Cancel = !Saved();
         }
 
+        Proj1 proj = new Proj1();
+
         private void mMany_Click(object sender, RoutedEventArgs e) {
             SelFolder form = new SelFolder();
+            form.DataContext = proj.Clone();
             form.Left = this.Left + 24;
             form.Top = this.Top + 24;
             if (!(form.ShowDialog() ?? false)) return;
 
+            proj = (Proj1)form.DataContext;
+
             CloseMe();
 
-            var sels = form.sels.ToArray();
+            c1 = new MCaset(proj.GetLang1Files(), proj.IsMulti.Value);
+            c2 = new MCaset(proj.GetLang2Files(), proj.IsMulti.Value);
 
-            c1 = new MCaset(sels[0].Select(rn => rn.FilePath).ToArray());
-            c2 = new MCaset(sels[1].Select(rn => rn.FilePath).ToArray());
-
-            ((GridViewColumn)FindName("h1")).Header = sels[0].First().Language;
-            ((GridViewColumn)FindName("h2")).Header = sels[1].First().Language;
+            ((GridViewColumn)FindName("h1")).Header = lLangDisp1.Text = proj.LangDisp1;
+            ((GridViewColumn)FindName("h2")).Header = lLangDisp2.Text = proj.LangDisp2;
 
             foreach (String k in c1.Names.Concat(c2.Names).Distinct()) {
                 oc.Add(new Item(c1, c2) { Name = k });
@@ -285,8 +288,8 @@ namespace ResxLocalizer {
                 using (StreamWriter wr = new StreamWriter(sfd.FileName, false, (sfd.FilterIndex == 2) ? Encoding.UTF8 : Encoding.GetEncoding(932))) {
                     Csvw w = new Csvw(wr, ',', '"');
                     w.Write("リソース名");
-                    w.Write("言語1");
-                    w.Write("言語2");
+                    w.Write(proj.LangDisp1);
+                    w.Write(proj.LangDisp2);
                     w.NextRow();
 
                     foreach (Item item in oc) {
@@ -323,12 +326,15 @@ namespace ResxLocalizer {
     public class MCaset : CasetBase {
         List<Caset> alc = new List<Caset>();
 
-        public ISep Sep = new PostNameSep("@");
+        public ISep Sep;
 
-        public MCaset(String[] alfp) {
+        bool includeFolderName;
+
+        public MCaset(String[] alfp, bool includeFolderName) {
             foreach (String fp in alfp) {
                 alc.Add(Eat(Caset.LoadFrom(fp)));
             }
+            Sep = new PostNameSep("@", "/", this.includeFolderName = includeFolderName);
         }
 
         private Caset Eat(Caset caset) {
@@ -346,45 +352,64 @@ namespace ResxLocalizer {
             get {
                 foreach (var c in alc) {
                     foreach (String a in c.Names) {
-                        yield return Sep.Build(a, c.ResName.BaseName);
+                        yield return Sep.Build(a, c.ResName.BaseName, c.ResName.FolderName);
                     }
                 }
             }
         }
 
         public interface ISep {
-            String Build(String key, String baseName);
-            bool TryParse(String built, out String key, out String baseName);
+            String Build(String key, String baseName, String folder);
+            bool TryParse(String built, out String key, out String baseName, out String folderName);
         }
 
         public class PostNameSep : ISep {
-            String sep;
+            String nameSep;
+            String projSep;
+            bool includeFolderName;
 
-            public PostNameSep(String sep) { this.sep = sep; }
-
-            public string Build(string key, string baseName) {
-                return key + sep + baseName;
+            public PostNameSep(String nameSep, String projSep, bool includeFolderName) {
+                this.nameSep = nameSep;
+                this.projSep = projSep;
+                this.includeFolderName = includeFolderName;
             }
 
-            public bool TryParse(string built, out string key, out string baseName) {
-                String[] cols = built.Split(new String[] { sep }, StringSplitOptions.None);
+            public string Build(string key, string baseName, string folder) {
+                if (includeFolderName)
+                    return key + nameSep + folder + projSep + baseName;
+                return key + nameSep + baseName;
+            }
+
+            public bool TryParse(string built, out string key, out string baseName, out string folderName) {
+                String[] cols = built.Split(new String[] { nameSep }, StringSplitOptions.None);
                 if (cols.Length == 2) {
-                    key = cols[0];
-                    baseName = cols[1];
-                    return true;
+                    String[] pcols = cols[1].Split(new String[] { projSep }, StringSplitOptions.None);
+                    if (pcols.Length == 2) {
+                        key = cols[0];
+                        folderName = pcols[0];
+                        baseName = pcols[1];
+                        return true;
+                    }
+                    else {
+                        key = cols[0];
+                        folderName = String.Empty;
+                        baseName = cols[1];
+                        return true;
+                    }
                 }
                 else {
-                    key = null;
-                    baseName = null;
+                    key = String.Empty;
+                    folderName = String.Empty;
+                    baseName = String.Empty;
                     return false;
                 }
             }
         }
 
         public override bool IsChanged(string Name) {
-            String key, baseName;
-            if (Sep.TryParse(Name, out key, out baseName)) {
-                var c1 = alc.FirstOrDefault(c => c.ResName.BaseName.Equals(baseName));
+            String key, baseName, folderName;
+            if (Sep.TryParse(Name, out key, out baseName, out folderName)) {
+                var c1 = alc.FirstOrDefault(c => c.ResName.BaseName.Equals(baseName) && (!includeFolderName || c.ResName.FolderName.Equals(folderName)));
                 if (c1 != null)
                     return c1.IsChanged(key);
             }
@@ -392,9 +417,9 @@ namespace ResxLocalizer {
         }
 
         public override string Gets(string Name) {
-            String key, baseName;
-            if (Sep.TryParse(Name, out key, out baseName)) {
-                var c1 = alc.FirstOrDefault(c => c.ResName.BaseName.Equals(baseName));
+            String key, baseName, folderName;
+            if (Sep.TryParse(Name, out key, out baseName, out folderName)) {
+                var c1 = alc.FirstOrDefault(c => c.ResName.BaseName.Equals(baseName) && (!includeFolderName || c.ResName.FolderName.Equals(folderName)));
                 if (c1 != null)
                     return c1.Gets(key);
             }
@@ -402,9 +427,9 @@ namespace ResxLocalizer {
         }
 
         public override void Sets(string Name, string value) {
-            String key, baseName;
-            if (Sep.TryParse(Name, out key, out baseName)) {
-                var c1 = alc.FirstOrDefault(c => c.ResName.BaseName.Equals(baseName));
+            String key, baseName, folderName;
+            if (Sep.TryParse(Name, out key, out baseName, out folderName)) {
+                var c1 = alc.FirstOrDefault(c => c.ResName.BaseName.Equals(baseName) && (!includeFolderName || c.ResName.FolderName.Equals(folderName)));
                 if (c1 != null)
                     c1.Sets(key, value);
             }
@@ -538,41 +563,6 @@ namespace ResxLocalizer {
             Caset c = new Caset();
             c.Load(fp);
             return c;
-        }
-    }
-
-    public class ResName {
-        public ResName(String fp) {
-            Avail = false;
-            Dir = String.Empty;
-            BaseName = String.Empty;
-            Language = String.Empty;
-
-            if (fp != null) {
-                Dir = Path.GetDirectoryName(fp);
-                String fn = Path.GetFileName(fp);
-                Match M;
-                if ((M = Regex.Match(fn, "^(?<b>.+?)\\.(?<a>[a-z]+\\-[a-z]+)\\.resx", RegexOptions.IgnoreCase)).Success) {
-                    BaseName = M.Groups["b"].Value.ToLowerInvariant();
-                    Language = M.Groups["a"].Value;
-                    Avail = true;
-                }
-                else if ((M = Regex.Match(fn, "^(?<b>.+?)\\.resx", RegexOptions.IgnoreCase)).Success) {
-                    BaseName = M.Groups["b"].Value.ToLowerInvariant();
-                    Avail = true;
-                }
-                FilePath = fp;
-            }
-        }
-
-        public bool Avail { get; set; }
-        public String Dir { get; set; }
-        public String BaseName { get; set; }
-        public String Language { get; set; }
-        public String FilePath { get; set; }
-
-        public override string ToString() {
-            return BaseName + "." + Language;
         }
     }
 

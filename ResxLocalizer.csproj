@@ -64,8 +64,13 @@
     </ApplicationDefinition>
     <Compile Include="Csvr.cs" />
     <Compile Include="Csvw.cs" />
+    <Compile Include="Proj1.cs" />
+    <Compile Include="ResName.cs" />
     <Compile Include="SelFolder.xaml.cs">
       <DependentUpon>SelFolder.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SelProj.xaml.cs">
+      <DependentUpon>SelProj.xaml</DependentUpon>
     </Compile>
     <Compile Include="SelWin.xaml.cs">
       <DependentUpon>SelWin.xaml</DependentUpon>
@@ -83,6 +88,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="SelFolder.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SelProj.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

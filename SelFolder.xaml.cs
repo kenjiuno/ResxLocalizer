@@ -24,106 +24,39 @@ namespace ResxLocalizer {
     public partial class SelFolder : Window {
         public SelFolder() {
             InitializeComponent();
-
-            Listup();
-        }
-
-        private void Listup() {
-            var isf = IsolatedStorageFile.GetUserStoreForAssembly();
-            isf.CreateDirectory("conf");
-            cbConf.DataContext = isf.GetFileNames("conf\\*").Select(fp => System.IO.Path.GetFileName(fp));
         }
 
         private void bRefDir_Click(object sender, RoutedEventArgs e) {
             FolderBrowserDialog fbd = new FolderBrowserDialog();
             fbd.SelectedPath = tbDir.Text;
             if (fbd.ShowDialog(null) != System.Windows.Forms.DialogResult.OK) return;
-            tbDir.Text = fbd.SelectedPath;
+            tbDir.Text = tbDir.Text.TrimEnd() + "\r\n" + fbd.SelectedPath;
 
             Refr();
         }
 
-        ResName[] alrn;
-        IGrouping<String, ResName>[] alg;
-        PerLang[] alpl;
+        Proj1 proj { get { return (Proj1)DataContext; } }
 
         private void Refr() {
             if (String.IsNullOrEmpty(tbDir.Text)) return;
 
-            alrn = Directory.GetFiles(tbDir.Text, "*.resx").Select(fp => new ResName(fp)).ToArray();
-            alg = alrn.GroupBy(p => p.Language).ToArray();
-            lbLang.DataContext = alpl = alg.Select(g => new PerLang { g = g }).ToArray();
-
-            int n = 0;
-            foreach (var pl in alpl) {
-                pl.IsSelected = true;
-                n++;
-                if (n == 2) break;
-            }
-        }
-
-        class PerLang : INotifyPropertyChanged {
-            public IGrouping<String, ResName> g;
-
-            bool _IsSelected;
-            public bool IsSelected { get { return _IsSelected; } set { _IsSelected = value; Fires("IsSelected"); } }
-
-            public String Disp { get { return String.IsNullOrEmpty(g.Key) ? "(Default)" : g.Key; } }
-
-            public String Lang { get { return g.Key; } }
-
-            public event PropertyChangedEventHandler PropertyChanged;
-
-            void Fires(string props) {
-                if (PropertyChanged != null) foreach (String prop in props.Split(',')) PropertyChanged(this, new PropertyChangedEventArgs(prop));
-            }
+            proj.RefrDirs();
         }
 
         private void tbDir_LostFocus(object sender, RoutedEventArgs e) {
             Refr();
         }
 
-        public IEnumerable<IEnumerable<ResName>> sels;
-
         private void bOk_Click(object sender, RoutedEventArgs e) {
-            if (alpl == null || alpl.Count(pl => pl.IsSelected) != 2) return;
-            sels = alpl.Where(p => p.IsSelected).Select(p => p.g);
             DialogResult = true;
         }
 
-        private void bReadConf_Click(object sender, RoutedEventArgs e) {
-            var isf = IsolatedStorageFile.GetUserStoreForAssembly();
-            using (var si = isf.OpenFile("conf\\" + cbConf.Text, FileMode.Open)) {
-                XDocument xd = XDocument.Load(si);
-                var el = xd.Element("ResxLocalizer");
-                tbDir.Text = el.Attribute("Dir").Value;
-                Refr();
-                String[] langs = el.Attribute("Langs").Value.Split(',');
-
-                foreach (var pl in alpl) {
-                    pl.IsSelected = langs.Contains(pl.Lang);
-                }
-            }
-        }
-
-        private void bSaveConf_Click(object sender, RoutedEventArgs e) {
-            XDocument xd = new XDocument(
-                new XElement("ResxLocalizer"
-                    , new XAttribute("Dir", tbDir.Text)
-                    , new XAttribute("Langs", String.Join(",", alpl.Where(p => p.IsSelected).Select(p => p.Lang).ToArray()))
-                    )
-                );
-
-            var isf = IsolatedStorageFile.GetUserStoreForAssembly();
-            using (var os = isf.CreateFile("conf\\" + cbConf.Text)) {
-                xd.Save(os);
-            }
-            Listup();
-        }
-
-        private void bDelConf_Click(object sender, RoutedEventArgs e) {
-            var isf = IsolatedStorageFile.GetUserStoreForAssembly();
-            isf.DeleteFile("conf\\" + cbConf.Text);
+        private void bProjs_Click(object sender, RoutedEventArgs e) {
+            SelProj form = new SelProj();
+            form.Left = this.Left + 24;
+            form.Top = this.Top + 24;
+            form.DataContext = DataContext;
+            form.ShowDialog();
         }
     }
 }

@@ -92,16 +92,18 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <Label Grid.Column="0" Grid.Row="0" Target="{Binding ElementName=tbDisp1}">
-                <AccessText>
-                    言語_1
-                </AccessText>
+                <TextBlock>
+                    <AccessText>言語_1: </AccessText>
+                    <Run Name="lLangDisp1" />
+                </TextBlock>
             </Label>
             <TextBox Grid.Column="0" Grid.Row="1" Text="{Binding Disp1,UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" Name="tbDisp1" />
 
             <Label Grid.Column="2" Grid.Row="0" Target="{Binding ElementName=tbDisp2}">
-                <AccessText >
-                    言語_2
-                </AccessText>
+                <TextBlock>
+                    <AccessText>言語_2: </AccessText>
+                    <Run Name="lLangDisp2" />
+                </TextBlock>
             </Label>
             <TextBox Grid.Column="2" Grid.Row="1" Text="{Binding Disp2,UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" Name="tbDisp2" />
         </Grid>

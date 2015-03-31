@@ -10,8 +10,8 @@
 !define APP "ResxLocalizer"
 !define COM "HIRAOKA HYPERS TOOLS, Inc."
 
-!define VER "0.6"
-!define APV "0_6"
+!define VER "0.7"
+!define APV "0_7"
 
 ; The name of the installer
 Name "${APP} ${VER}"
