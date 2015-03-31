@@ -12,7 +12,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("HIRAOKA HYPERS TOOLS, Inc.")]
 [assembly: AssemblyProduct("ResxLocalizer")]
-[assembly: AssemblyCopyright("Copyright (c)  2014")]
+[assembly: AssemblyCopyright("Copyright (c)  2014,2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -52,4 +52,4 @@ using System.Windows;
 // 既定値にすることができます:
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly:     AssemblyVersion("0.6.0.0")]//here
-[assembly: AssemblyFileVersion("0.6.0.0")]//here
+[assembly: AssemblyFileVersion("0.7.0.0")]//here
